@@ -6,22 +6,33 @@ void main() {
 
   group('AppController Test', () {
     test("is satisfied", () {
-      var container = Containers(1, "Container yyy", 6);
-      var carga = Cargas(1, "teste", 3);
+      var container = Containers(1, "Container yyy", 3);
+      var load = Loads(1, "test", 6);
 
       expect(
-        ContainerPodeLevarCargaResfriadaSpec(container).isSatisfiedBy(carga),
+        ContainerCanTakeColdLoadSpec(container).isSatisfiedBy(load),
         true,
       );
     });
 
     test("is not satisfied", () {
       var container = Containers(1, "Container yyy", 6);
-      var carga = Cargas(1, "teste", 3);
+      var load = Loads(1, "test", 3);
 
       expect(
-        (ContainerPodeLevarCargaResfriadaSpec(container) &
-                ContainerPodeLevarCargaCapacidadeMaiorQue5Spec(container))
+        (ContainerCanTakeColdLoadSpec(container) &
+                ContainerCanCarryLoadCapacityGreaterThan5Spec(container))
+            .isSatisfiedBy(load),
+        false,
+      );
+    });
+
+    test("is not satisfied", () {
+      var container = Containers(1, "Container yyy", 6);
+      var carga = Loads(1, "test", 3);
+      expect(
+        ContainerCanTakeColdLoadSpec(container)
+            .and(ContainerCanCarryLoadCapacityGreaterThan5Spec(container))
             .isSatisfiedBy(carga),
         false,
       );
@@ -29,70 +40,57 @@ void main() {
 
     test("is not satisfied", () {
       var container = Containers(1, "Container yyy", 6);
-      var carga = Cargas(1, "teste", 3);
-      expect(
-        ContainerPodeLevarCargaResfriadaSpec(container)
-            .and(ContainerPodeLevarCargaCapacidadeMaiorQue5Spec(container))
-            .isSatisfiedBy(carga),
-        false,
-      );
-    });
-
-    test("is not satisfied", () {
-      var container = Containers(1, "Container yyy", 6);
-      var carga = Cargas(1, "teste", 3);
+      var load = Loads(1, "test", 3);
 
       expect(
-        ContainerPodeLevarCargaResfriadaSpec(container)
-            .and(ContainerPodeLevarCargaCapacidadeMaiorQue5Spec(container))
-            .isSatisfiedBy(carga),
+        ContainerCanTakeColdLoadSpec(container)
+            .and(ContainerCanCarryLoadCapacityGreaterThan5Spec(container))
+            .isSatisfiedBy(load),
         false,
       );
     });
   });
 }
 
-class ContainerPodeLevarCargaResfriadaSpec
-    extends CompositeSpecification<Cargas> {
+class ContainerCanTakeColdLoadSpec extends CompositeSpecification<Loads> {
   Containers container;
 
-  ContainerPodeLevarCargaResfriadaSpec(Containers container) {
+  ContainerCanTakeColdLoadSpec(Containers container) {
     this.container = container;
   }
 
   @override
-  bool isSatisfiedBy(Cargas carga) {
-    return container.capacidadeTemperaturaMinima <=
-        carga.temperaturaDeConservacao;
+  bool isSatisfiedBy(Loads load) {
+    return container.minConservationTemperature <= load.conservationTemperature;
   }
 }
 
-class ContainerPodeLevarCargaCapacidadeMaiorQue5Spec
-    extends CompositeSpecification<Cargas> {
+class ContainerCanCarryLoadCapacityGreaterThan5Spec
+    extends CompositeSpecification<Loads> {
   Containers container;
 
-  ContainerPodeLevarCargaCapacidadeMaiorQue5Spec(Containers container) {
+  ContainerCanCarryLoadCapacityGreaterThan5Spec(Containers container) {
     this.container = container;
   }
 
   @override
-  bool isSatisfiedBy(Cargas carga) {
-    return container.capacidadeTemperaturaMinima > 5;
+  bool isSatisfiedBy(Loads carga) {
+    return container.minConservationTemperature > 5;
   }
 }
 
-class Cargas {
+class Loads {
   final int id;
   final String name;
-  final int temperaturaDeConservacao;
+  final int conservationTemperature;
 
-  Cargas(this.id, this.name, this.temperaturaDeConservacao);
+  Loads(this.id, this.name, this.conservationTemperature);
 }
 
 class Containers {
   final int id;
   final String name;
-  final int capacidadeTemperaturaMinima;
+  final int minConservationTemperature;
 
-  Containers(this.id, this.name, this.capacidadeTemperaturaMinima);
+  Containers(this.id, this.name, this.minConservationTemperature);
 }

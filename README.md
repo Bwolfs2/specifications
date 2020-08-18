@@ -5,6 +5,7 @@
 
 ## Getting Started
 
+```dart
 import 'package:specifications/src/specification.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -76,5 +77,6 @@ class Containers {
 
   Containers(this.id, this.name, this.capacidadeTemperaturaMinima);
 }
+```
 
 Link de Apoio: https://martinfowler.com/apsupp/spec.pdf
